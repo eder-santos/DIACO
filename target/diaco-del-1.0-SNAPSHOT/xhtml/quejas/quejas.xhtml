@@ -1,0 +1,114 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main-anonimo.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{quejas.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Quejas
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Ingreso de queja</legend>
+                        <h:panelGrid rendered="#{quejas.exito}">
+                            <h:outputText value="Queja ingresada correctamente"/>
+                            <ace:linkButton id="linkBttnAction"
+                                            value="Ingresar nueva queja"
+                                            action="#{quejas.ingresarNueva}">
+                            </ace:linkButton>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{!quejas.exito}">
+                            <ace:selectMenu id="deptos" value="#{quejas.departamento}" label="Departamento" labelPosition="top"
+                                valueChangeListener="#{quejas.departamentoListener}" required="true">
+                                <f:selectItem itemValue="" itemLabel="--- Seleccione ---"/>
+                                <f:selectItems value="#{quejas.departamentos}"/>
+                                <ace:ajax execute="@this" render="@all" />
+                                <ace:ajax event="blur" execute="@this" render="@all" />
+                            </ace:selectMenu>
+
+                            <ace:selectMenu id="munis" value="#{quejas.municipio}" label="Municipio" labelPosition="top"
+                                rendered="#{quejas.showMunicipios}" valueChangeListener="#{quejas.municipioListener}"
+                                required="true">
+                                <f:selectItem itemValue="" itemLabel="--- Seleccione ---"/>
+                                <f:selectItems value="#{quejas.municipios}"/>
+                                <ace:ajax execute="@this" render="@all" />
+                                <ace:ajax event="blur" execute="@this" render="@all" />
+                            </ace:selectMenu>
+
+                            <ace:selectMenu id="cats" value="#{quejas.categoria}" label="Categoria" labelPosition="top"
+                                rendered="#{quejas.showCategorias}" valueChangeListener="#{quejas.categoriasListener}"
+                                required="true">
+                                <f:selectItem itemValue="" itemLabel="--- Seleccione ---"/>
+                                <f:selectItems value="#{quejas.categorias}"/>
+                                <ace:ajax execute="@this" render="@all" />
+                                <ace:ajax event="blur" execute="@this" render="@all" />
+                            </ace:selectMenu>
+
+                            <ace:selectMenu id="coms" value="#{quejas.comercio}" label="Comercio" labelPosition="top"
+                                rendered="#{quejas.showComercios}" valueChangeListener="#{quejas.comercioListener}"
+                                required="true">
+                                <f:selectItem itemValue="" itemLabel="--- Seleccione ---"/>
+                                <f:selectItems value="#{quejas.comercios}"/>
+                                <ace:ajax execute="@this" render="@all" />
+                                <ace:ajax event="blur" execute="@this" render="@all" />
+                            </ace:selectMenu>
+
+                            <ace:selectMenu id="sucs" value="#{quejas.sucursal}" label="Sucursal" labelPosition="top"
+                                rendered="#{quejas.showSucursal}" valueChangeListener="#{quejas.sucursalListener}"
+                                required="true">
+                                <f:selectItem itemValue="" itemLabel="--- Seleccione ---"/>
+                                <f:selectItems value="#{quejas.sucursales}"/>
+                                <ace:ajax execute="@this" render="@all" />
+                                <ace:ajax event="blur" execute="@this" render="@all" />
+                            </ace:selectMenu>
+
+                            <ace:textAreaEntry id="quejaDet" value="#{quejas.quejaDetalle}"
+                                label="Queja" labelPosition="top"
+                                resizable="false" rendered="#{quejas.showDetalles}"
+                                maxlength="400" rows="5" cols="50" required="true">
+                                <ace:ajax render="@this quejaDet quejaDetMsg"/>
+                            </ace:textAreaEntry>
+
+                            <ace:dateTimeEntry id="cal" value="#{quejas.fechaIncidente}"
+                                timeZone="America/Guatemala" pattern="dd/MM/yyyy"
+                                renderAsPopup="true" rendered="#{quejas.showDetalles}"
+                                maxdate="#{quejas.fechaMaxima}" label="Fecha incidente" labelPosition="top"
+                                required="true">
+                                <ace:ajax render="@this cal calMsg"/>
+                            </ace:dateTimeEntry>
+
+                            <ace:textEntry id="captcha" value="#{quejas.captchaTexto}" label="Captcha" labelPosition="top"
+                                rendered="#{quejas.showDetalles}" required="true">
+                                <f:validator validatorId="captchaValidator"/>
+                                <ace:ajax render="@this captcha captchaMsg"/>
+                            </ace:textEntry>
+                            <h:graphicImage id="capimg" value="#{facesContext.externalContext.requestContextPath}/../Captcha.jpg"
+                                rendered="#{quejas.showDetalles}"/>
+
+                            <h:commandButton id="ingresar" value="Continuar" action="#{quejas.ingresarQueja}"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" rendered="#{!quejas.exito}">
+                            <ace:message id="deptosMsg" for="deptos"/>
+                            <ace:message id="munisMsg" for="munis"/>
+                            <ace:message id="catsMsg" for="cats"/>
+                            <ace:message id="comsMsg" for="coms"/>
+                            <ace:message id="sucsMsg" for="sucs"/>
+                            <ace:message id="quejaDetMsg" for="quejaDet"/>
+                            <ace:message id="calMsg" for="cal"/>
+                            <ace:message id="captchaMsg" for="captcha"/>
+                        </h:panelGrid>
+                    </fieldset>
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

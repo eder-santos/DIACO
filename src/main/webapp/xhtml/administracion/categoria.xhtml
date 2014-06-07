@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{categoria.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Categorias
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Categorias</legend>
+                        <h:panelGrid rendered="#{categoria.exito}">
+                            <h:outputText value="Registro ingresado correctamente" rendered="#{categoria.opcion eq 1}"/>
+                            <h:outputText value="Registro actualizado correctamente"
+                                          rendered="#{categoria.opcion eq 2}"/>
+                            <h:outputText value="Registro eliminado correctamente" rendered="#{categoria.opcion eq 3}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:dataTable value="#{categoria.categorias}"
+                                           var="reg" paginator="true" paginatorPosition="bottom" rows="10"
+                                           stateMap="#{categoria.stateMap}" selectionMode="single">
+
+
+                                <ace:ajax event="select" render="@this form:status" execute="@this"/>
+
+                                <ace:column id="id" headerText="Id" sortBy="#{reg.id}"
+                                            filterBy="#{reg.id}" filterMatchMode="contains" style="width:100px;">
+                                    <h:outputText id="idCell" value="#{reg.id}"/>
+                                </ace:column>
+                                <ace:column id="region" headerText="Categoria" sortBy="#{reg.nombre}"
+                                            filterBy="#{reg.nombre}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="nameCell" value="#{reg.nombre}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="3" id="status">
+                            <h:commandButton id="nuevo" value="Agregar" action="#{categoria.crea}"
+                                             rendered="#{!categoria.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="editar" value="Modificar" action="#{categoria.edita}"
+                                             rendered="#{categoria.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="borrar" value="Eliminar" action="#{categoria.borra}"
+                                             rendered="#{categoria.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                    </fieldset>
+                </h:panelGroup>
+
+                <ace:dialog id="dialog" header="#{categoria.titulo}" widgetVar="dialogo"
+                            closable="true" modal="true" draggable="false" showEffect="clip" hideEffect="fade"
+                            width="400">
+                    <h:panelGrid columns="1" id="dialogForm">
+                        <ace:textEntry id="regionNombre" value="#{categoria.categoriaCampo}" label="Categoria"
+                                       labelPosition="top"
+                                       required="true" disabled="#{categoria.opcion eq 3}"/>
+                        <ace:pushButton id="agregar" value="Agregar" action="#{categoria.agregar}"
+                                        rendered="#{categoria.opcion eq 1}">
+                            <ace:ajax render="@all regionNombre"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="modificar" value="Modificar" action="#{categoria.modificar}"
+                                        rendered="#{categoria.opcion eq 2}">
+                            <ace:ajax render="@all regionNombre"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="eliminar" value="Eliminar" action="#{categoria.eliminar}"
+                                        rendered="#{categoria.opcion eq 3}">
+                            <ace:ajax render="@all regionNombre"/>
+                        </ace:pushButton>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

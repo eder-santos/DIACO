@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main-anonimo.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{quejas.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Login
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Ingreso</legend>
+                        <div style="color: red;">
+                            <ace:messages id="loginErrorMessages"/>
+                        </div>
+                        <h:form id="loginForm">
+                            <h:panelGrid columns="2" style="width: 500px">
+                                <h:outputLabel id="userNameLabel" value="Usuario:" for="j_username"
+                                               style="width: 200px; margin-right: 20px;"/>
+                                <ace:textEntry id="j_username" value="#{loginFormBean.userName}" style="width:280px;"/>
+
+                                <h:outputLabel id="passwordLabel" value="Password:" for="j_password"
+                                               style="width: 200px; margin-right: 20px;"/>
+                                <h:inputSecret id="j_password" value="#{loginFormBean.password}" style="width:280px;"/>
+
+                                <h:outputText value=" "/>
+                                <h:commandButton id="j_submitLogin" value="Login"
+                                                 action="#{login.loginUsingSpringAuthenticationManager}"/>
+                            </h:panelGrid>
+                        </h:form>
+                    </fieldset>
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sucursal.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Sucursales
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Sucursales</legend>
+                        <h:panelGrid rendered="#{sucursal.exito}">
+                            <h:outputText value="Registro ingresado correctamente" rendered="#{sucursal.opcion eq 1}"/>
+                            <h:outputText value="Registro actualizado correctamente"
+                                          rendered="#{sucursal.opcion eq 2}"/>
+                            <h:outputText value="Registro eliminado correctamente" rendered="#{sucursal.opcion eq 3}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:dataTable value="#{sucursal.sucursales}"
+                                           var="reg" paginator="true" paginatorPosition="bottom" rows="10"
+                                           stateMap="#{sucursal.stateMap}" selectionMode="single">
+
+
+                                <ace:ajax event="select" render="@this form:status" execute="@this"/>
+
+                                <ace:column id="id" headerText="Id" sortBy="#{reg.id}"
+                                            filterBy="#{reg.id}" filterMatchMode="contains" style="width:100px;">
+                                    <h:outputText id="idCell" value="#{reg.id}"/>
+                                </ace:column>
+                                <ace:column id="deptos" headerText="Sucursal" sortBy="#{reg.nombre}"
+                                            filterBy="#{reg.nombre}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="deptoCell" value="#{reg.nombre}"/>
+                                </ace:column>
+                                <ace:column id="region" headerText="Comercio" sortBy="#{reg.comercio.nombre}"
+                                            filterBy="#{reg.comercio.nombre}" filterMatchMode="contains"
+                                            style="width:200px;">
+                                    <h:outputText id="nameCell" value="#{reg.comercio.nombre}"/>
+                                </ace:column>
+                                <ace:column id="municipio" headerText="Municipio" sortBy="#{reg.municipio.nombre}"
+                                            filterBy="#{reg.municipio.nombre}" filterMatchMode="contains"
+                                            style="width:200px;">
+                                    <h:outputText id="nameCell2" value="#{reg.municipio.nombre}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="3" id="status">
+                            <h:commandButton id="nuevo" value="Agregar" action="#{sucursal.crea}"
+                                             rendered="#{!sucursal.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="editar" value="Modificar" action="#{sucursal.edita}"
+                                             rendered="#{sucursal.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="borrar" value="Eliminar" action="#{sucursal.borra}"
+                                             rendered="#{sucursal.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                    </fieldset>
+                </h:panelGroup>
+
+                <ace:dialog id="dialog" header="#{sucursal.titulo}" widgetVar="dialogo"
+                            closable="true" modal="true" draggable="false" showEffect="clip" hideEffect="fade"
+                            width="400" height="320">
+                    <h:panelGrid columns="1" id="dialogForm">
+                        <ace:textEntry id="regionNombre" value="#{sucursal.campoNombre}" label="Sucursal"
+                                       labelPosition="top"
+                                       required="true" disabled="#{sucursal.opcion eq 3}"/>
+
+                        <ace:selectMenu id="cmb1" value="#{sucursal.comboId}" label="Comercio" labelPosition="top"
+                                        required="true" rendered="#{!(sucursal.opcion eq 3)}">
+                            <f:selectItems value="#{sucursal.comercios}"/>
+                        </ace:selectMenu>
+
+                        <ace:textEntry id="cmb1Lbl" value="#{sucursal.selectedRow.comercio.nombre}" label="Comercio"
+                                       labelPosition="top"
+                                       rendered="#{(sucursal.opcion eq 3)}"
+                                       disabled="true"/>
+
+
+                        <ace:selectMenu id="cmb2" value="#{sucursal.comboId2}" label="Departamento" labelPosition="top"
+                                        required="true" rendered="#{!(sucursal.opcion eq 3)}"
+                                        valueChangeListener="#{sucursal.departamentoListener}">
+                            <f:selectItems value="#{sucursal.departamentos}"/>
+                            <ace:ajax execute="@this" render="@all"/>
+                            <!--<ace:ajax event="blur" execute="@this" render="@all" />-->
+                        </ace:selectMenu>
+
+                        <ace:textEntry id="cmb2Lbl" value="#{sucursal.selectedRow.municipio.departamento.nombre}"
+                                       label="Departamento" labelPosition="top"
+                                       rendered="#{(sucursal.opcion eq 3)}"
+                                       disabled="true"/>
+
+                        <ace:selectMenu id="cmb3" value="#{sucursal.comboId3}" label="Municipio" labelPosition="top"
+                                        required="true"
+                                        rendered="#{!(sucursal.opcion eq 3) and sucursal.showMuncipios}">
+                            <f:selectItems value="#{sucursal.municipios}"/>
+                        </ace:selectMenu>
+
+                        <ace:textEntry id="cmb3Lbl" value="#{sucursal.selectedRow.municipio.nombre}" label="Municipio"
+                                       labelPosition="top"
+                                       rendered="#{(sucursal.opcion eq 3)}"
+                                       disabled="true"/>
+
+                        <ace:textAreaEntry id="dire" value="#{sucursal.campoDire}" label="Dirección" labelPosition="top"
+                                           required="true" cols="40" disabled="#{(sucursal.opcion eq 3)}"/>
+
+                        <ace:pushButton id="agregar" value="Agregar" action="#{sucursal.agregar}"
+                                        rendered="#{sucursal.opcion eq 1}">
+                            <ace:ajax render="@all regionNombre cmb1 cmb2"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="modificar" value="Modificar" action="#{sucursal.modificar}"
+                                        rendered="#{sucursal.opcion eq 2}">
+                            <ace:ajax render="@all regionNombre cmb1 cmb2 cmb3"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="eliminar" value="Eliminar" action="#{sucursal.eliminar}"
+                                        rendered="#{sucursal.opcion eq 3}">
+                            <ace:ajax render="@all regionNombre cmb1 cmb2 cmb3"/>
+                        </ace:pushButton>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

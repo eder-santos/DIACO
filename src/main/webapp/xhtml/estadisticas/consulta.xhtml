@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main-diaco.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{consulta.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Consulta
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Consulta de quejas</legend>
+                        <h:panelGrid columns="2">
+                            <ace:dateTimeEntry id="cal1" value="#{consulta.fechaInicial}"
+                                               timeZone="America/Guatemala" pattern="dd/MM/yyyy"
+                                               renderAsPopup="true"
+                                               maxdate="#{consulta.fechaMaxima}" label="Fecha inicial" labelPosition="top"
+                                               required="true">
+                                <ace:ajax render="@this cal1"/>
+                            </ace:dateTimeEntry>
+
+                            <ace:dateTimeEntry id="cal2" value="#{consulta.fechaFinal}"
+                                               timeZone="America/Guatemala" pattern="dd/MM/yyyy"
+                                               renderAsPopup="true"
+                                               maxdate="#{quejas.fechaMaxima}" label="Fecha final" labelPosition="top"
+                                               required="true">
+                                <ace:ajax render="@this cal2"/>
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:pushButton value="Consultar" action="#{consulta.consultar}"/>
+                            <ace:dataExporter id="dataExporter" label="Exportar Excel" type="xls" target="quejasTable" fileName="Quejas"/>
+                        </h:panelGrid>
+                        <h:panelGrid>
+                            <ace:dataTable value="#{consulta.quejas}" id="quejasTable"
+                                           var="reg" paginator="true" paginatorPosition="bottom" rows="10"
+                                           stateMap="#{categoria.stateMap}" selectionMode="single">
+                                <ace:ajax event="select" render="@this form:status" execute="@this"/>
+
+                                <ace:column id="id" headerText="Id" sortBy="#{reg.id}"
+                                            filterBy="#{reg.id}" filterMatchMode="contains" style="width:100px;">
+                                    <h:outputText id="idCell" value="#{reg.id}"/>
+                                </ace:column>
+                                <ace:column id="comercio" headerText="Comercio" sortBy="#{reg.comercio.nombre}"
+                                            filterBy="#{reg.comercio.nombre}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="comercioCell" value="#{reg.comercio.nombre}"/>
+                                </ace:column>
+                                <ace:column id="sucursal" headerText="Sucursal" sortBy="#{reg.sucursal.nombre}"
+                                            filterBy="#{reg.sucursal.nombre}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="sucursalCell" value="#{reg.sucursal.nombre}"/>
+                                </ace:column>
+                                <ace:column id="descripcion" headerText="Descripción" sortBy="#{reg.descripcion}"
+                                            filterBy="#{reg.descripcion}" filterMatchMode="contains" style="width:200px; text-align:justify;">
+                                    <h:outputText id="descripcionCell" value="#{reg.descripcion}"/>
+                                </ace:column>
+                                <ace:column id="fecha" headerText="Fecha incidente" sortBy="#{reg.fechaIncidente}"
+                                            filterBy="#{reg.fechaIncidente}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="fechaCell" value="#{reg.fechaIncidente}">
+                                        <f:convertDateTime type="both" pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </fieldset>
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

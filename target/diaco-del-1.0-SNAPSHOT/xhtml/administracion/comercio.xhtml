@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/xhtml/template/main.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{comercio.preRender}"/>
+    </f:metadata>
+
+    <ui:define name="title">
+        Comercios
+    </ui:define>
+
+    <ui:define name="content">
+        <div id="forms-div">
+            <h:form id="form">
+                <h:panelGroup>
+                    <fieldset>
+                        <legend>Comercios</legend>
+                        <h:panelGrid rendered="#{comercio.exito}">
+                            <h:outputText value="Registro ingresado correctamente" rendered="#{comercio.opcion eq 1}"/>
+                            <h:outputText value="Registro actualizado correctamente"
+                                          rendered="#{comercio.opcion eq 2}"/>
+                            <h:outputText value="Registro eliminado correctamente" rendered="#{comercio.opcion eq 3}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:dataTable value="#{comercio.comercios}"
+                                           var="reg" paginator="true" paginatorPosition="bottom" rows="10"
+                                           stateMap="#{comercio.stateMap}" selectionMode="single">
+
+
+                                <ace:ajax event="select" render="@this form:status" execute="@this"/>
+
+                                <ace:column id="id" headerText="Id" sortBy="#{reg.id}"
+                                            filterBy="#{reg.id}" filterMatchMode="contains" style="width:100px;">
+                                    <h:outputText id="idCell" value="#{reg.id}"/>
+                                </ace:column>
+                                <ace:column id="deptos" headerText="Comercio" sortBy="#{reg.nombre}"
+                                            filterBy="#{reg.nombre}" filterMatchMode="contains" style="width:200px;">
+                                    <h:outputText id="deptoCell" value="#{reg.nombre}"/>
+                                </ace:column>
+                                <ace:column id="region" headerText="Categoria" sortBy="#{reg.categoria.nombre}"
+                                            filterBy="#{reg.categoria.nombre}" filterMatchMode="contains"
+                                            style="width:200px;">
+                                    <h:outputText id="nameCell" value="#{reg.categoria.nombre}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="3" id="status">
+                            <h:commandButton id="nuevo" value="Agregar" action="#{comercio.crea}"
+                                             rendered="#{!comercio.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="editar" value="Modificar" action="#{comercio.edita}"
+                                             rendered="#{comercio.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                            <h:commandButton id="borrar" value="Eliminar" action="#{comercio.borra}"
+                                             rendered="#{comercio.selected}">
+                                <ace:ajax render="@this dialog dialogForm"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                    </fieldset>
+                </h:panelGroup>
+
+                <ace:dialog id="dialog" header="#{comercio.titulo}" widgetVar="dialogo"
+                            closable="true" modal="true" draggable="false" showEffect="clip" hideEffect="fade"
+                            width="400" height="250">
+                    <h:panelGrid columns="1" id="dialogForm">
+                        <ace:textEntry id="regionNombre" value="#{comercio.campoNombre}" label="Comercio"
+                                       labelPosition="top"
+                                       required="true" disabled="#{comercio.opcion eq 3}"/>
+
+                        <ace:selectMenu id="cmb1" value="#{comercio.comboId}" label="Categoria" labelPosition="top"
+                                        required="true" rendered="#{!(comercio.opcion eq 3)}">
+                            <f:selectItems value="#{comercio.categorias}"/>
+                        </ace:selectMenu>
+
+                        <ace:textEntry id="cmb1Lbl" value="#{comercio.selectedRow.categoria.nombre}" label="Categoria"
+                                       labelPosition="top"
+                                       rendered="#{(comercio.opcion eq 3)}"
+                                       disabled="true"/>
+
+                        <ace:pushButton id="agregar" value="Agregar" action="#{comercio.agregar}"
+                                        rendered="#{comercio.opcion eq 1}">
+                            <ace:ajax render="@all regionNombre cmb1"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="modificar" value="Modificar" action="#{comercio.modificar}"
+                                        rendered="#{comercio.opcion eq 2}">
+                            <ace:ajax render="@all regionNombre cmb1"/>
+                        </ace:pushButton>
+
+                        <ace:pushButton id="eliminar" value="Eliminar" action="#{comercio.eliminar}"
+                                        rendered="#{comercio.opcion eq 3}">
+                            <ace:ajax render="@all regionNombre cmb1"/>
+                        </ace:pushButton>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

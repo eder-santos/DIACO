@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="com.diaco"/>
+
+    <http realm="Sample Realm" entry-point-ref="authenticationEntryPoint">
+
+        <!-- any role that is used to protect a directory, can be multiples -->
+        <intercept-url pattern='/xhtml/administracion/*' access='ROLE_ADMIN'/>
+        <intercept-url pattern='/xhtml/estadisticas/*' access='ROLE_DIACO'/>
+
+        <!--<intercept-url pattern='/xhtml/administracion/*' access="hasIpAddress('192.168.1.0/24'), ROLE_ADMIN"/>-->
+
+        <form-login login-page="/xhtml/login/login.jsf"
+                    authentication-failure-url="/xhtml/login/login.jsf"
+                    default-target-url="/xhtml/administracion/sucursal.jsf"
+                    always-use-default-target="true"/>
+
+        <!-- logout page uses the default LogoutFilter, no changes are needed as IT accepts a GET call... -->
+        <!-- here is an example logout link:
+                <a href="#{request.contextPath}/j_spring_security_logout">Logout</a> -->
+        <logout logout-url="/j_spring_security_logout"
+                logout-success-url="/xhtml/login/login.jsf"
+                invalidate-session="true"/>
+    </http>
+
+    <beans:bean id="authenticationEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="/xhtml/login/login.jsf" />
+    </beans:bean>
+
+<!--    <authentication-manager alias="authenticationManager">
+        <authentication-provider>
+            <user-service>
+                <user name="eder" password="123456" authorities="ROLE_ADMIN"/>
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>-->
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="authProvider">
+            <password-encoder hash="md5"/>
+        </authentication-provider>
+    </authentication-manager>
+</beans:beans>

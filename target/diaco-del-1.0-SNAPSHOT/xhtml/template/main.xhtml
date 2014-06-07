@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+<f:view>
+    <h:head>
+        <title>DIACO - <ui:insert name="title"/></title>
+        <h:outputStylesheet library="default" name="css/template_style.css"/>
+    </h:head>
+
+    <h:body>
+        <div id="wrapper">
+            <div id="header">
+                <ui:include src="header.xhtml"/>
+            </div>
+            <div id="navigation">
+                <h:panelGrid columns="8">
+                    <ace:linkButton value="Categorias" href="categoria.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Comercios" href="comercio.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Departamentos" href="departamento.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Municipios" href="municipio.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Regiones" href="region.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Sucursales" href="sucursal.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Usuarios" href="usuario.jsf" styleClass="menu-links"/>
+                    <ace:linkButton value="Logout" href="#{request.contextPath}/j_spring_security_logout" styleClass="menu-links"/>
+                </h:panelGrid>
+            </div>
+
+            <div id="content">
+                <ui:insert name="content"/>
+            </div>
+        </div>
+    </h:body>
+</f:view>
+
+</html>
