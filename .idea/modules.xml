@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DIACO.iml" filepath="$PROJECT_DIR$/DIACO.iml" />
+      <module fileurl="file://$PROJECT_DIR$/diaco-del.iml" filepath="$PROJECT_DIR$/diaco-del.iml" />
     </modules>
   </component>
 </project>

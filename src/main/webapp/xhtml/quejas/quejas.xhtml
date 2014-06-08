@@ -94,7 +94,7 @@
                             <h:graphicImage id="capimg" value="#{facesContext.externalContext.requestContextPath}/../Captcha.jpg"
                                 rendered="#{quejas.showDetalles}"/>
 
-                            <h:commandButton id="ingresar" value="Continuar" action="#{quejas.ingresarQueja}"/>
+                            <h:commandButton id="ingresar" value="Ingresar" action="#{quejas.ingresarQueja}"/>
                         </h:panelGrid>
                         <h:panelGrid width="100%" rendered="#{!quejas.exito}">
                             <ace:message id="deptosMsg" for="deptos"/>

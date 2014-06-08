@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="diaco-del:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="diaco-del-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="diaco-del:war exploded" />
+    </root>
+  </artifact>
+</component>
